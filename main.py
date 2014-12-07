@@ -24,6 +24,8 @@ class Enemy:
     down = 0
 
 
+PLAYER_SPEED = 10
+
 
 def main():
     #import pdb; pdb.set_trace()
@@ -64,17 +66,38 @@ def main():
             if event.key == K_ESCAPE:
                 sys.exit(0)
             if event.key == K_SPACE:
-                shot = pygame.image.load('PhaserShot.png')
+                shot = Shot()
+                shot.x = sprites['players'][0].x
+                shot.y = sprites['players'][0].y
+                shot.up = 0
+                shot.down = 0
+                shot.img = pygame.image.load('PhaserShot.png')
                 sprites['shots'].append(shot)
+            if event.key == K_UP:
+                sprites['players'][0].y -= PLAYER_SPEED
+            if event.key == K_DOWN:
+                sprites['players'][0].y += PLAYER_SPEED
+            if event.key == K_RIGHT:
+                sprites['players'][0].x += PLAYER_SPEED
+            if event.key == K_LEFT:
+                sprites['players'][0].x -= PLAYER_SPEED
         screen.fill((0,0,0))
         for key, value in sprites.iteritems():
             #print key
             for s in value:
-                if s.x > 700 or s.y > 700 or s.x < 0 or s.y < 0:
-                    s.x = random.randrange(0,700)
-                    s.y = random.randrange(0,700)
-                s.x += i
-                s.y += i
+                if key != 'shots' and key != 'players':
+                    if s.x > 700 or s.y > 700 or s.x < 0 or s.y < 0:
+                        s.x = random.randrange(0,700)
+                        s.y = random.randrange(0,700)
+                    else:
+                        s.x += i
+                        s.y += i
+                elif key == 'shots':
+                    if s.x > 1024 or s.y > 768 or s.x < 0 or s.y < 0:
+                        del sprites[key][0]
+                    else:
+                        s.x += 5
+
                 screen.blit(s.img, (s.x, s.y))
         i = i + 1
         pygame.display.flip()
